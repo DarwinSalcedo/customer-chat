@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <!-- Sender's message layout -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/SenderCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardElevation="12dp"
+        android:layout_margin="6dp"
+        app:cardCornerRadius="6dp"
+        app:cardBackgroundColor="#008577"
+        android:layout_gravity="left"
+        android:layout_marginRight="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/textViewSenderMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:textColor="#FFFFFF"
+                android:text="Hello, this is a sender's message." />
+
+            <TextView
+                android:id="@+id/UserId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_gravity="left"
+                android:textColor="#FBF2F2"
+                android:textSize="12sp"
+                />
+            <TextView
+                android:id="@+id/SenderTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="8dp"
+                android:layout_gravity="left"
+                android:textSize="12sp"
+                android:textColor="#FBF2F2"/>
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Receiver's message layout -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/AgentCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="12dp"
+        android:layout_margin="6dp"
+        android:layout_marginLeft="20dp"
+        app:cardBackgroundColor="@color/white"
+        android:layout_gravity="right">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/textViewReceiverMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:text="Hello, this is a sender's message." />
+
+            <TextView
+                android:id="@+id/AgentId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="8dp"
+                android:layout_gravity="left"
+                android:textColor="#000000"
+                android:textSize="10sp"
+                />
+            <TextView
+                android:id="@+id/AgentTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_gravity="left"
+                android:textSize="10sp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
