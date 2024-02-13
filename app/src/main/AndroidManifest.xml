@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -12,8 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CustomerSupport"
-        tools:targetApi="31">
+        android:theme="@style/Theme.CustomerSupport">
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"
@@ -30,6 +33,9 @@
             android:exported="false">
 
         </activity>
+         <service android:name=".service.UIService"
+            android:exported="false">
+        </service>
     </application>
 
 </manifest>

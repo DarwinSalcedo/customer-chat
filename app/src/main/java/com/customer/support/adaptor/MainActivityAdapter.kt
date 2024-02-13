@@ -14,7 +14,6 @@ class MainActivityAdapter(val msgList: MutableMap<String, MutableList<MessageDao
 
     var my_data: MutableList<MessageDao> = mutableListOf()
     inner class MainViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val thread_id: TextView = view.findViewById(R.id.thread_id)
         val body: TextView = view.findViewById(R.id.body)
         val timestamp: TextView = view.findViewById(R.id.timestamp)
     }
@@ -30,7 +29,6 @@ class MainActivityAdapter(val msgList: MutableMap<String, MutableList<MessageDao
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
 
         val currentItem = my_data[position]
-        holder.thread_id.text = currentItem.conversationId
         holder.body.text = currentItem.message
         holder.timestamp.text = currentItem.timestamp
 

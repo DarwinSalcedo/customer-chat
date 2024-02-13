@@ -1,27 +1,20 @@
 package com.customer.support.activity
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.provider.Settings
+import android.widget.Button
 import androidx.annotation.RequiresApi
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
 import com.customer.support.R
-import com.customer.support.adaptor.MainActivityAdapter
-import com.customer.support.dao.MessageDao
-import com.customer.support.utilis.Constants
-import com.customer.support.utilis.Resource
-import com.customer.support.viewModel.NetworkViewModel
-import java.sql.Timestamp
-import java.time.Instant
+import com.customer.support.service.UIService
+import com.customer.support.utilis.Constants.Companion.REQUEST_CODE
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
-    lateinit var mAdapter: MainActivityAdapter
-    private var msgList: MutableMap<String, MutableList<MessageDao>> = mutableMapOf()
-    val viewModel = NetworkViewModel()
+    private lateinit var sttar: Button
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,57 +22,39 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        recyclerView = findViewById(R.id.recyclerView)
+        val intent =
+            Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+
+        if (!Settings.canDrawOverlays(this)) {
+            startActivityForResult(intent, REQUEST_CODE)
+        }
+
+        /*recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
         mAdapter = MainActivityAdapter(msgList)
-        recyclerView.adapter = mAdapter
-        setObservers()
+        recyclerView.adapter = mAdapter*/
+
+        sttar =  findViewById(R.id.startService)
+        sttar.setOnClickListener{
+            startService()
+        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onResume() {
-        super.onResume()
-        setObservers()
+
+
+
+
+    fun startService() {
+        if (!UIService.initialized && Settings.canDrawOverlays(this)) {
+            val service = Intent(this, UIService::class.java)
+            startService(service)
+        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun setObservers() {
-
-        viewModel.getIncomingMessages()
-
-        viewModel.incomingRes.observe(this) { it ->
-            when (it) {
-                is Resource.Error -> {
-                    Toast.makeText(this, "Error Loading the Messages", Toast.LENGTH_SHORT).show()
-                }
-
-                is Resource.Loading -> {
-                    Toast.makeText(this, "Loading", Toast.LENGTH_SHORT).show()
-                }
-
-                is Resource.Success -> {
-                    msgList.clear()
-                    Constants.MSGLIST.clear()
-
-                    it.data.let { resourse ->
-                        resourse?.forEach {
-                            if (msgList.containsKey(it.conversationId)) {
-                                msgList[it.conversationId]?.add(it)
-                            } else {
-                                msgList.set(it.conversationId, mutableListOf(it))
-                            }
-                        }
-                    }
-
-                    msgList.forEach { listEntry ->
-                        listEntry.value.sortByDescending { Timestamp.from(Instant.parse(it.timestamp)) }
-                    }
-
-                    Constants.MSGLIST = msgList
-                    mAdapter.notifyDataSetChanged()
-
-                }
-            }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE && Settings.canDrawOverlays(this)) {
+            startService()
         }
     }
 }
