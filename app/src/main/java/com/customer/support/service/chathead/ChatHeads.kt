@@ -100,11 +100,11 @@ class Line(val x1: Double, val y1: Double, var x2: Double, var y2: Double) {
 
 class ChatHeads(context: Context) : View.OnTouchListener, FrameLayout(context) {
     companion object {
-        val CHAT_HEAD_OUT_OF_SCREEN_X: Int = dpToPx(1f)
-        val CHAT_HEAD_SIZE: Int = dpToPx(122f)
-        val CHAT_HEAD_PADDING: Int = dpToPx(8f)
-        val CHAT_HEAD_EXPANDED_PADDING: Int = dpToPx(1f)
-        val CHAT_HEAD_EXPANDED_MARGIN_TOP: Float = dpToPx(1f).toFloat()
+        val CHAT_HEAD_OUT_OF_SCREEN_X: Int = dpToPx(10f)
+        val CHAT_HEAD_SIZE: Int = dpToPx(62f)
+        val CHAT_HEAD_PADDING: Int = dpToPx(86f)
+        val CHAT_HEAD_EXPANDED_PADDING: Int = dpToPx(4f)
+        val CHAT_HEAD_EXPANDED_MARGIN_TOP: Float = dpToPx(6f).toFloat()
         val CLOSE_SIZE = dpToPx(0f)
         val CLOSE_CAPTURE_DISTANCE = dpToPx(0f)
         val CLOSE_CAPTURE_DISTANCE_THROWN = dpToPx(0f)

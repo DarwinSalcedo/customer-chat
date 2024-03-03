@@ -9,10 +9,9 @@ data class OutgoingMessageDao(
     val message: String,
     private val StoreType: String = "Seleccionar",
     private val UserBizName: String = "",
-    private val InstanceCode: String = "AR",
-    private val UserMail: String = "test@pdssa.com.ar",
-    private val UserName: String = "Test",
-    private val UserPhone: String = "",
-    private val IsTest: Boolean = true
+    private val UserMail: String = "",
+    private val UserName: String = "",
+    private val IsTest: Boolean = true,
 )
+
 

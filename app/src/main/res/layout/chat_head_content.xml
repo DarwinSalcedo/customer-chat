@@ -3,7 +3,7 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="120dp"
+    android:layout_marginTop="80dp"
     android:orientation="vertical"
     android:theme="@style/Theme.AppCompat.Light">
 
@@ -30,9 +30,8 @@
                 <FrameLayout
                     android:id="@+id/option1"
                     android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="10dp"
                     android:clickable="true"
                     android:clipChildren="true"
                     android:focusable="true"
@@ -42,7 +41,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Tengo un problema con una impresora"
+                        android:text="1 Como puedo ajustar tal cosa, sin que tenga que revisar"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="#fff"
                         android:textSize="18sp"
@@ -54,9 +53,8 @@
                 <FrameLayout
                     android:id="@+id/option2"
                     android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="10dp"
                     android:clickable="true"
                     android:clipChildren="true"
                     android:focusable="true"
@@ -65,7 +63,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Como aplico descuentos?"
+                        android:text="2 Como puedo ajustar tal cosa, sin que tenga que revisar"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="#fff"
                         android:textSize="18sp"
@@ -77,9 +75,8 @@
                 <FrameLayout
                     android:id="@+id/option3"
                     android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="10dp"
                     android:clickable="true"
                     android:clipChildren="true"
                     android:focusable="true"
@@ -88,7 +85,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Tengo un problema con la facturacion electronica"
+                        android:text="3 Como puedo ajustar tal cosa, sin que tenga que revisar"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="#fff"
                         android:textSize="18sp"
@@ -101,9 +98,8 @@
                 <FrameLayout
                     android:id="@+id/option4"
                     android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
+                    android:layout_height="160dp"
+                    android:layout_margin="10dp"
                     android:clickable="true"
                     android:clipChildren="true"
                     android:focusable="true"
@@ -112,7 +108,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Necesito cambiar y actualizar los precios"
+                        android:text="4 Como puedo ajustar tal cosa, sin que tenga que revisar"
                         android:fontFamily="sans-serif-medium"
                         android:textColor="#fff"
                         android:textSize="18sp"
