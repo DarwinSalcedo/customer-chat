@@ -1,6 +1,5 @@
 package com.customer.support.service
 
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -23,7 +22,6 @@ import com.customer.support.utilis.SharedPreferences
 import com.customer.support.utilis.runOnMainLoop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class UIService : Service() {
@@ -121,7 +119,7 @@ class UIService : Service() {
             val result = instance.repository.sendMessages(outgoingMessageDao = outgoingMessageDao)
 
 
-            if (instance.chatHeads.activeChatHead == null){
+            if (instance.chatHeads.activeChatHead == null) {
                 instance.chatHeads.topChatHead?.let {
                     it.handlerUIChat.notifications = 1
                     it.updateNotifications()
@@ -143,8 +141,6 @@ class UIService : Service() {
                     conversationId = SharedPreferences.retrieveConversationId(this),
                 )
             )
-
-
         }
     }
 }

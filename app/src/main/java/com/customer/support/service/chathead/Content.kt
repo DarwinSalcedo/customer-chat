@@ -23,7 +23,7 @@ class Content(context: Context) : LinearLayout(context) {
 
 
     var messagesView: RecyclerView
-    var messagesAdapter = SpecificThreadAdapter()
+    var messagesAdapter = SpecificThreadAdapter(mutableListOf(),context)
     var layoutManager = LinearLayoutManager(context)
 
 
@@ -128,18 +128,19 @@ class Content(context: Context) : LinearLayout(context) {
         scaleSpring.currentValue = 0.0
 
         option1.setOnClickListener {
-            sendMessagesByOption(sendBtn, option1, "opcion numero uno")
+            sendMessagesByOption(sendBtn, option1, "answering-from-device:"+"Tengo un problema con una impresora")
         }
         option2.setOnClickListener {
-            sendMessagesByOption(sendBtn, option2, "opcion numero dos")
+
+            sendMessagesByOption(sendBtn, option2, "answering-from-device:"+"Como aplico descuentos?")
 
         }
         option3.setOnClickListener {
-            sendMessagesByOption(sendBtn, option3, "opcion numero tres")
+            sendMessagesByOption(sendBtn, option3, "answering-from-device:"+"Tengo un problema con la facturacion electronica")
 
         }
         option4.setOnClickListener {
-            sendMessagesByOption(sendBtn, option4, "opcion numero cuatro")
+            sendMessagesByOption(sendBtn, option4, "answering-from-device:"+"Necesito cambiar y actualizar los precios")
         }
     }
 
