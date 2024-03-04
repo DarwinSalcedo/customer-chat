@@ -1,7 +1,10 @@
 package com.customer.support.service
 
-import android.annotation.SuppressLint
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,7 +12,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
-import android.view.*
+import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.customer.support.R
@@ -17,13 +20,13 @@ import com.customer.support.activity.MainActivity
 import com.customer.support.dao.MessageDao
 import com.customer.support.dao.OutgoingMessageDao
 import com.customer.support.network.Repository
+import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
 import com.customer.support.service.chathead.ChatHeads
 import com.customer.support.service.chathead.HandlerUIChat
 import com.customer.support.utilis.SharedPreferences
 import com.customer.support.utilis.runOnMainLoop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class UIService : Service() {
@@ -53,8 +56,7 @@ class UIService : Service() {
 
         innerReceiver = InnerReceiver()
 
-        val intentFilter = IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-        registerReceiver(innerReceiver, intentFilter)
+        registerReceiver(innerReceiver, IntentFilter("com.customer.chat.BROADCAST"))
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -121,7 +123,7 @@ class UIService : Service() {
             val result = instance.repository.sendMessages(outgoingMessageDao = outgoingMessageDao)
 
 
-            if (instance.chatHeads.activeChatHead == null){
+            if (instance.chatHeads.activeChatHead == null) {
                 instance.chatHeads.topChatHead?.let {
                     it.handlerUIChat.notifications = 1
                     it.updateNotifications()
@@ -129,9 +131,31 @@ class UIService : Service() {
             }
             result?.let { completation(result) }
 
+            checkToSendBroadcast(result?.message ?: "")
 
         }
 
+    }
+
+    private fun checkToSendBroadcast(outgoingMessage: String) {
+        val decodeData = outgoingMessage.split("|")
+        if (decodeData.size > 1) {
+            val intent = Intent("com.customer.chat.BROADCAST")
+            when (decodeData.last()) {
+                "CHKPRINTCONFIG" -> {
+                    intent.putExtra("CHKPRINTCONFIG", "TEST 1")
+                }
+
+                "TESTPRINT1" -> {
+                    intent.putExtra("TESTPRINT1", "TEST 2 ")
+                }
+
+                "TESTPRINT2" -> {
+                    intent.putExtra("TESTPRINT2", "TEST 3")
+                }
+            }
+            sendBroadcast(intent)
+        }
     }
 
     private fun startUIView() {
@@ -143,8 +167,6 @@ class UIService : Service() {
                     conversationId = SharedPreferences.retrieveConversationId(this),
                 )
             )
-
-
         }
     }
 }
@@ -152,6 +174,7 @@ class UIService : Service() {
 
 internal class InnerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+
         val action = intent.action
         if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS == action) {
             val reason = intent.getStringExtra("reason")
@@ -159,5 +182,8 @@ internal class InnerReceiver : BroadcastReceiver() {
                 UIService.instance.chatHeads.collapse()
             }
         }
+
+        val bubble = UIService.instance.chatHeads.activeChatHead
+        bubble?.handlerUIChat?.checkMessage(LOCAL_PREFIX_MARK + "noconfiguracion")
     }
 }

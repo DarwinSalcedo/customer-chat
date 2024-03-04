@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Button
+import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.customer.support.R
@@ -14,7 +15,10 @@ import com.customer.support.utilis.Constants.Companion.REQUEST_CODE
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var sttar: Button
+    private lateinit var start: Button
+    private lateinit var country: EditText
+    private lateinit var name: EditText
+    private lateinit var email: EditText
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,24 +33,23 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE)
         }
 
-        /*recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        mAdapter = MainActivityAdapter(msgList)
-        recyclerView.adapter = mAdapter*/
 
-        sttar =  findViewById(R.id.startService)
-        sttar.setOnClickListener{
+        start = findViewById(R.id.startService)
+        email = findViewById(R.id.mail)
+        country = findViewById(R.id.country)
+        name = findViewById(R.id.name)
+        start.setOnClickListener {
             startService()
         }
     }
 
 
-
-
-
     fun startService() {
         if (!UIService.initialized && Settings.canDrawOverlays(this)) {
             val service = Intent(this, UIService::class.java)
+            service.putExtra("name", name.text.toString().trim())
+            service.putExtra("email", email.text.toString().trim())
+            service.putExtra("country", country.text.toString().trim())
             startService(service)
         }
     }

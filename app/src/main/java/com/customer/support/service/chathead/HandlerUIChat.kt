@@ -20,6 +20,7 @@ class HandlerUIChat(
         val adapter = UIService.instance.chatHeads.content.messagesAdapter
         adapter.messages = mutableListOf()
         adapter.notifyDataSetChanged()
+        UIService.instance.chatHeads.content.clearMessages()
     }
 
     fun addMessages(message: String) {
@@ -51,6 +52,10 @@ class HandlerUIChat(
             chatHeads.content.messagesView.scrollToPosition(adapter.messages.lastIndex)
         }
 
+        checkMessage(message)
+    }
+
+     fun checkMessage(message: String) {
         UIService.instance.onProcessMessage(
             OutgoingMessageDao(conversationId = conversationId, message)
         ) { messageDao ->
@@ -64,7 +69,7 @@ class HandlerUIChat(
                     conversationId,
                     System.currentTimeMillis().toString(),
                     false,
-                    messageDao?.message ?: "",
+                    messageDao?.message?.removeSuffix("|CHKPRINTCONFIG") ?: "",
                     System.currentTimeMillis().toFormatDate()
                 )
             )
@@ -83,6 +88,7 @@ class HandlerUIChat(
     fun sendMessage(text: String?) {
         text?.let { addMessages(it) }
     }
+
 
 
 }

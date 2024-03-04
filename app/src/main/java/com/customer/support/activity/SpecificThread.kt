@@ -49,7 +49,7 @@ class SpecificThread : AppCompatActivity() {
         }
 
         _recyclerView.layoutManager = LinearLayoutManager(this)
-        _mAdapter = SpecificThreadAdapter(_dataList)
+        _mAdapter = SpecificThreadAdapter(_dataList,this)
         _recyclerView.adapter = _mAdapter
 
 

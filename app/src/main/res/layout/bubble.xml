@@ -8,7 +8,7 @@
     <ImageView
             android:id="@+id/bubble_avatar"
             android:layout_width="match_parent"
-            android:src="@drawable/bistro_logo"
+            android:src="@drawable/bistro_icon"
         android:paddingBottom="10dp"
             android:layout_height="match_parent" />
 

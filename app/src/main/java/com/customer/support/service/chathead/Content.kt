@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.customer.support.R
 import com.customer.support.adaptor.SpecificThreadAdapter
+import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
 import com.customer.support.service.UIService
 import com.customer.support.utilis.SharedPreferences
 import com.facebook.rebound.SimpleSpringListener
@@ -23,7 +24,7 @@ class Content(context: Context) : LinearLayout(context) {
 
 
     var messagesView: RecyclerView
-    var messagesAdapter = SpecificThreadAdapter()
+    var messagesAdapter = SpecificThreadAdapter(mutableListOf(), context)
     var layoutManager = LinearLayoutManager(context)
 
 
@@ -128,18 +129,31 @@ class Content(context: Context) : LinearLayout(context) {
         scaleSpring.currentValue = 0.0
 
         option1.setOnClickListener {
-            sendMessagesByOption(sendBtn, option1, "opcion numero uno")
+            sendMessagesByOption(
+                sendBtn,
+                option1,
+                LOCAL_PREFIX_MARK + "Tengo un problema con una impresora"
+            )
         }
         option2.setOnClickListener {
-            sendMessagesByOption(sendBtn, option2, "opcion numero dos")
+
+            sendMessagesByOption(sendBtn, option2, LOCAL_PREFIX_MARK + "Como aplico descuentos?")
 
         }
         option3.setOnClickListener {
-            sendMessagesByOption(sendBtn, option3, "opcion numero tres")
+            sendMessagesByOption(
+                sendBtn,
+                option3,
+                LOCAL_PREFIX_MARK + "Como aplico descuentos no youtube?"
+            )
 
         }
         option4.setOnClickListener {
-            sendMessagesByOption(sendBtn, option4, "opcion numero cuatro")
+            sendMessagesByOption(
+                sendBtn,
+                option4,
+                LOCAL_PREFIX_MARK + "Necesito cambiar y actualizar los precios"
+            )
         }
     }
 
@@ -169,5 +183,10 @@ class Content(context: Context) : LinearLayout(context) {
         anim.duration = 100
         anim.repeatMode = Animation.RELATIVE_TO_SELF
         startAnimation(anim)
+    }
+
+    fun clearMessages (){
+        messagesAdapter = SpecificThreadAdapter(mutableListOf(), context)
+        messagesView.adapter = messagesAdapter
     }
 }

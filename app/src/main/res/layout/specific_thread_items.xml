@@ -60,6 +60,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <WebView
+                android:id="@+id/playerView"
+                android:layout_width="650dp"
+                android:minWidth="500dp"
+                android:backgroundTint="@color/black"
+                android:layout_height="350dp"
+                android:layout_gravity="center"
+                android:padding="8dp"/>
+
             <TextView
                 android:id="@+id/textViewReceiverMessage"
                 android:layout_width="wrap_content"
