@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             SharedPreferences.activeSettings(this)
 
             val service = Intent(this, UIService::class.java)
+            service.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK + Intent.FLAG_ACTIVITY_SINGLE_TOP)
             startService(service)
             finish()
         }

@@ -1,13 +1,19 @@
 package com.customer.support.service.chathead
 
-import android.graphics.*
-import android.view.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PixelFormat
+import android.view.Gravity
+import android.view.View
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import com.customer.support.utilis.dpToPx
 import com.customer.support.utilis.getOverlayFlag
 import com.customer.support.utilis.getScreenSize
-import com.facebook.rebound.*
+import com.facebook.rebound.SimpleSpringListener
+import com.facebook.rebound.Spring
+import com.facebook.rebound.SpringSystem
 
 class Close(var chatHeads: ChatHeads) : View(chatHeads.context) {
     private var params = WindowManager.LayoutParams(
@@ -34,8 +40,6 @@ class Close(var chatHeads: ChatHeads) : View(chatHeads.context) {
 
     var hidden = true
 
-    //   private var bitmapBg = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(OverlayService.instance.resources, R.drawable.close_bg), ChatHeads.CLOSE_SIZE, ChatHeads.CLOSE_SIZE, false)!!
-    // private val bitmapClose = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(OverlayService.instance.resources, R.drawable.close), dpToPx(28f), dpToPx(28f), false)!!
 
     fun hide() {
         val metrics = getScreenSize()

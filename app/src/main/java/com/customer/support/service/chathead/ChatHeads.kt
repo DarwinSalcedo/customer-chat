@@ -3,6 +3,7 @@ package com.customer.support.service.chathead
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -399,7 +400,7 @@ class ChatHeads(context: Context) : View.OnTouchListener, FrameLayout(context) {
         if (activeChatHead == null) return
     }
 
-    private fun onClose() {
+     fun onClose() {
         removeAll()
 
         closeCaptured = false
@@ -463,7 +464,7 @@ class ChatHeads(context: Context) : View.OnTouchListener, FrameLayout(context) {
 
         // Moving content with active chat head
         var tmpChatHead: ChatHead? = null
-        if (collapsing) tmpChatHead = topChatHead!!
+        if (collapsing) tmpChatHead = topChatHead
         else if (chatHead == activeChatHead) tmpChatHead = chatHead
 
         if (tmpChatHead != null) {

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.customer.support.activity.MainActivity
 import com.customer.support.domain.PrinterConfiguration
 import com.customer.support.domain.PrinterModel
 import com.customer.support.domain.PrinterResponse
@@ -14,7 +15,6 @@ import com.google.gson.Gson
 
 class HandlerReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        Log.e("HandlerReceiver", "onReceive::: ")
         val data = intent.getStringExtra("data") ?: ""
 
         when (intent.getStringExtra("type") ?: "") {
@@ -203,6 +203,19 @@ class HandlerReceiver : BroadcastReceiver() {
                     chatHead.handlerUIChat.updateChannel(id)
 
                 }
+            }
+
+            "STARTSERVICE" -> {
+                Log.e("TAG", "onReceive: STARTSERVICE")
+
+
+                Intent(context, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK + Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }.also {
+                    context.startActivity(it)
+                }
+
+
             }
 
         }

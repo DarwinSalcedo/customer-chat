@@ -3,6 +3,7 @@ package com.customer.support.service.chathead
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.EditText
@@ -110,11 +111,26 @@ class Content(context: Context) : LinearLayout(context) {
 
         menuBtn.setOnClickListener {
             SharedPreferences.resetSettings(context)
-            Intent(context, MainActivity::class.java).apply {
-                flags = FLAG_ACTIVITY_NEW_TASK
-            }.also {
-                context.startActivity(it)
-            }
+
+            UIService.instance.chatHeads.collapse()
+
+
+            this.postDelayed({
+
+                UIService.instance.chatHeads.onClose()
+
+                Intent(context, UIService::class.java).also {
+                    context.stopService(it)
+                }
+
+                Intent(context, MainActivity::class.java).apply {
+                    flags = FLAG_ACTIVITY_NEW_TASK + FLAG_ACTIVITY_SINGLE_TOP
+                }.also {
+                    context.startActivity(it)
+                }
+            }, 500)
+
+
         }
 
         scaleSpring.addListener(object : SimpleSpringListener() {
