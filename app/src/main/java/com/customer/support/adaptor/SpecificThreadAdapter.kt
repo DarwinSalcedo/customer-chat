@@ -51,13 +51,13 @@ class SpecificThreadAdapter(
     override fun onBindViewHolder(holder: SpecificViewHolder, position: Int) {
         val currentItem = messages[position]
         if (currentItem.sender) {
-            holder.sendermsg.text = currentItem.message?.removePrefix(Repository.LOCAL_PREFIX_MARK)
+            holder.sendermsg.text = currentItem.message?.removePrefix(Repository.LOCAL_PREFIX_MARK)?.removeSuffix(Repository.PROCCESSCONTEXT)?.removeSuffix(Repository.SUCCESSCONTEXT)
             "Hora:- ${currentItem.time.toString()}".also { holder.senderTime.text = it }
             holder.SenderCard.visibility = View.VISIBLE
             holder.AgentCard.visibility = View.GONE
         } else {
 
-            holder.receivermsg.text = currentItem.message?.removePrefix(Repository.LOCAL_PREFIX_MARK)
+            holder.receivermsg.text = currentItem.message?.removePrefix(Repository.LOCAL_PREFIX_MARK)?.removeSuffix(Repository.PROCCESSCONTEXT)?.removeSuffix(Repository.SUCCESSCONTEXT)
             "Hora:- ${currentItem.time.toString()}".also { holder.agentTime.text = it }
 
 

@@ -5,13 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -20,7 +19,6 @@ import com.customer.support.activity.MainActivity
 import com.customer.support.dao.MessageDao
 import com.customer.support.dao.OutgoingMessageDao
 import com.customer.support.network.Repository
-import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
 import com.customer.support.service.chathead.ChatHeads
 import com.customer.support.service.chathead.HandlerUIChat
 import com.customer.support.utilis.SharedPreferences
@@ -42,7 +40,6 @@ class UIService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.Main)
     private val repository = Repository()
 
-    private lateinit var innerReceiver: InnerReceiver
 
     override fun onCreate() {
         super.onCreate()
@@ -53,10 +50,6 @@ class UIService : Service() {
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
         chatHeads = ChatHeads(this)
-
-        innerReceiver = InnerReceiver()
-
-        registerReceiver(innerReceiver, IntentFilter("com.customer.chat.BROADCAST"))
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -97,7 +90,6 @@ class UIService : Service() {
 
     override fun onDestroy() {
         initialized = false
-        unregisterReceiver(innerReceiver)
         super.onDestroy()
     }
 
@@ -117,7 +109,7 @@ class UIService : Service() {
 
     fun onProcessMessage(
         outgoingMessageDao: OutgoingMessageDao,
-        completation: (MessageDao?) -> Unit
+        completion: (MessageDao?) -> Unit
     ) {
         instance.serviceScope.launch {
             val result = instance.repository.sendMessages(outgoingMessageDao = outgoingMessageDao)
@@ -129,7 +121,7 @@ class UIService : Service() {
                     it.updateNotifications()
                 }
             }
-            result?.let { completation(result) }
+            result?.let { completion(result) }
 
             checkToSendBroadcast(result?.message ?: "")
 
@@ -140,21 +132,63 @@ class UIService : Service() {
     private fun checkToSendBroadcast(outgoingMessage: String) {
         val decodeData = outgoingMessage.split("|")
         if (decodeData.size > 1) {
-            val intent = Intent("com.customer.chat.BROADCAST")
             when (decodeData.last()) {
                 "CHKPRINTCONFIG" -> {
-                    intent.putExtra("CHKPRINTCONFIG", "TEST 1")
+                    val intent = Intent("com.pds.bistrov2.ChatApiReceiver")
+                    intent.putExtra("type", "CHKPRINTCONFIG")
+                    Log.e("SEND:::", "checkToSendBroadcast :::" + outgoingMessage)
+                    intent.setPackage("com.pds.bistrov2")
+                    sendBroadcast(intent)
                 }
 
-                "TESTPRINT1" -> {
-                    intent.putExtra("TESTPRINT1", "TEST 2 ")
+                "PROCCESSCONTEXT" -> {
+
+                    Log.e("SEND:::", "PROCCESSCONTEXT :::" + outgoingMessage)
+                    if (outgoingMessage.contains("0 ")) {
+                        Intent("com.customer.chat.HANDLER").apply {
+                            setPackage("com.customer.support")
+                            putExtra("type", "CANCELAR-LOCAL")
+
+                        }.also {
+                            sendBroadcast(it)
+                        }
+                    } else {
+                        Intent("com.customer.chat.HANDLER").apply {
+                            setPackage("com.customer.support")
+                            putExtra("type", "TRYAGAING-LOCAL")
+
+                        }.also {
+                            sendBroadcast(it)
+                        }
+                    }
                 }
 
-                "TESTPRINT2" -> {
-                    intent.putExtra("TESTPRINT2", "TEST 3")
+                "SUCCESSCONTEXT" -> {
+
+                    Log.e("SEND:::", "SUCCESSCONTEXT :::" + outgoingMessage)
+
+                    if (outgoingMessage.contains("0 ")) {
+                        Intent("com.customer.chat.HANDLER").apply {
+                            setPackage("com.customer.support")
+                            putExtra("type", "CANCELAR-LOCAL")
+
+                        }.also {
+                            sendBroadcast(it)
+                        }
+                    } else {
+                        Intent("com.customer.chat.HANDLER").apply {
+                            setPackage("com.customer.support")
+                            putExtra("type", "SUCCESSCONTEXT-LOCAL")
+
+                        }.also {
+                            sendBroadcast(it)
+                        }
+                    }
+
+
                 }
+
             }
-            sendBroadcast(intent)
         }
     }
 
@@ -168,22 +202,5 @@ class UIService : Service() {
                 )
             )
         }
-    }
-}
-
-
-internal class InnerReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-
-        val action = intent.action
-        if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS == action) {
-            val reason = intent.getStringExtra("reason")
-            if (reason != null) {
-                UIService.instance.chatHeads.collapse()
-            }
-        }
-
-        val bubble = UIService.instance.chatHeads.activeChatHead
-        bubble?.handlerUIChat?.checkMessage(LOCAL_PREFIX_MARK + "noconfiguracion")
     }
 }

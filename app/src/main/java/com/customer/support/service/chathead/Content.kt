@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.customer.support.R
 import com.customer.support.adaptor.SpecificThreadAdapter
 import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
+import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
+import com.customer.support.network.Repository.Companion.SUCCESSCONTEXT
 import com.customer.support.service.UIService
 import com.customer.support.utilis.SharedPreferences
 import com.facebook.rebound.SimpleSpringListener
@@ -71,25 +73,8 @@ class Content(context: Context) : LinearLayout(context) {
 
 
         newChat.setOnClickListener {
-            /* val params = LayoutParams(
-                 LayoutParams.WRAP_CONTENT,
-                 LayoutParams.MATCH_PARENT
-             )
-
-             params.weight = 0.7f
-
-             val params2 = LayoutParams(
-                 LayoutParams.WRAP_CONTENT,
-                 LayoutParams.MATCH_PARENT
-             )
-
-             params2.weight = 0.3f
-
-             mainCointainer.layoutParams = params
-
-             mainCointainerA.layoutParams = params2
-
-             Log.e("TAG", ": ")*/
+            SharedPreferences.resetPrinters(context)
+            SharedPreferences.resetSuccessFlag(context)
             UIService.instance.chatHeads.activeChatHead.let {
                 it?.handlerUIChat?.clearMessages()
 
@@ -99,18 +84,24 @@ class Content(context: Context) : LinearLayout(context) {
                 chatHead.handlerUIChat.updateChannel(id)
 
             }
-
         }
 
         sendBtn.setOnClickListener {
             val bubble = UIService.instance.chatHeads.activeChatHead
             sendBtn.postOnAnimationDelayed({
                 if (!editText.text.isNullOrEmpty()) {
-                    bubble?.handlerUIChat?.sendMessage(editText.text.toString())
+                    //It should check if there is a context printer running
+                    val message =
+                        if (SharedPreferences.isActiveSuccessFlag(context))
+                            LOCAL_PREFIX_MARK + " " + editText.text.toString() + " " + SUCCESSCONTEXT
+                        else if (SharedPreferences.getContextPrinter(context) != "-1")
+                            LOCAL_PREFIX_MARK + " " + editText.text.toString() + " " + PROCCESSCONTEXT
+                        else editText.text.toString()
+                    bubble?.handlerUIChat?.sendMessage(message)
                     editText.text.clear()
 
                 }
-            }, 1000)
+            }, 500)
 
         }
 
@@ -185,7 +176,7 @@ class Content(context: Context) : LinearLayout(context) {
         startAnimation(anim)
     }
 
-    fun clearMessages (){
+    fun clearMessages() {
         messagesAdapter = SpecificThreadAdapter(mutableListOf(), context)
         messagesView.adapter = messagesAdapter
     }

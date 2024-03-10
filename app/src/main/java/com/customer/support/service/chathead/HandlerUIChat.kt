@@ -1,5 +1,6 @@
 package com.customer.support.service.chathead
 
+import android.util.Log
 import com.customer.support.dao.ChatDao
 import com.customer.support.dao.OutgoingMessageDao
 import com.customer.support.service.UIService
@@ -23,10 +24,9 @@ class HandlerUIChat(
         UIService.instance.chatHeads.content.clearMessages()
     }
 
-    fun addMessages(message: String) {
+    fun addMessage(message: String, checkMessage: Boolean = true) {
 
         val chatHeads = UIService.instance.chatHeads
-
 
         val adapter = chatHeads.content.messagesAdapter
 
@@ -52,43 +52,78 @@ class HandlerUIChat(
             chatHeads.content.messagesView.scrollToPosition(adapter.messages.lastIndex)
         }
 
-        checkMessage(message)
+        if (checkMessage) checkMessage(message)
     }
 
-     fun checkMessage(message: String) {
+
+    fun checkMessage(message: String) {
         UIService.instance.onProcessMessage(
             OutgoingMessageDao(conversationId = conversationId, message)
         ) { messageDao ->
-            val chatHeads = UIService.instance.chatHeads
 
+            if(message.contains("|PROCCESSCONTEXT") ||  message.contains("|SUCCESSCONTEXT")) return@onProcessMessage
+            Log.e("TAG", "checkMessage: ", )
+            val messageClean = messageDao?.message?.removeSuffix("|CHKPRINTCONFIG")
+                ?.removeSuffix("|PROCCESSCONTEXT")?.removeSuffix("|SUCCESSCONTEXT") ?: ""
+            if (messageClean.isNotEmpty()) {
 
-            val adapter = chatHeads.content.messagesAdapter
+                val chatHeads = UIService.instance.chatHeads
+                val adapter = chatHeads.content.messagesAdapter
 
-            adapter.messages.add(
-                ChatDao(
-                    conversationId,
-                    System.currentTimeMillis().toString(),
-                    false,
-                    messageDao?.message?.removeSuffix("|CHKPRINTCONFIG") ?: "",
-                    System.currentTimeMillis().toFormatDate()
+                adapter.messages.add(
+                    ChatDao(
+                        conversationId,
+                        System.currentTimeMillis().toString(),
+                        false,
+                        messageClean,
+                        System.currentTimeMillis().toFormatDate()
+                    )
                 )
-            )
 
-            adapter.notifyItemInserted(adapter.messages.lastIndex)
+                adapter.notifyItemInserted(adapter.messages.lastIndex)
 
-            chatHeads.content.messagesView.post {
-                chatHeads.content.messagesView.smoothScrollToPosition(adapter.messages.lastIndex)
-                chatHeads.activeChatHead?.notifications = 0
+                chatHeads.content.messagesView.post {
+                    chatHeads.content.messagesView.smoothScrollToPosition(adapter.messages.lastIndex)
+                    chatHeads.activeChatHead?.notifications = 0
+                }
             }
-
         }
+    }
+
+    fun addAgentMessage(message: String) {
+
+        val chatHeads = UIService.instance.chatHeads
+
+        val adapter = chatHeads.content.messagesAdapter
+
+        val lm = chatHeads.content.layoutManager
+        val startIndex = adapter.messages.lastIndex
+        adapter.messages.add(
+            ChatDao(
+                conversationId,
+                System.currentTimeMillis().toString(),
+                false,
+                message,
+                System.currentTimeMillis().toFormatDate()
+            )
+        )
+
+        if (lm.findLastVisibleItemPosition() >= startIndex - 1 && adapter.messages.lastIndex >= 0) {
+            adapter.notifyItemInserted(adapter.messages.lastIndex)
+        } else {
+            adapter.notifyDataSetChanged()
+        }
+
+        chatHeads.content.messagesView.post {
+            chatHeads.content.messagesView.scrollToPosition(adapter.messages.lastIndex)
+        }
+
     }
 
 
     fun sendMessage(text: String?) {
-        text?.let { addMessages(it) }
+        text?.let { addMessage(it) }
     }
-
 
 
 }

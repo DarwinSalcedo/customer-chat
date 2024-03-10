@@ -1,6 +1,10 @@
 package com.customer.support.utilis
 
 import android.content.Context
+import android.util.Log
+import com.customer.support.domain.PrinterModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.UUID
 
 class SharedPreferences {
@@ -38,6 +42,54 @@ class SharedPreferences {
             val id = UUID.randomUUID().toString()
             insert("conversation_id", id, context)
             return id
+        }
+
+        fun savePrintersByList(context: Context, printers: MutableList<PrinterModel>) {
+            val value = printers.toMapByModel()
+            val data = Gson().toJson(value)
+            Log.e("TAG", "savePrinters: ")
+            insert("printers", data, context)
+            insert("context_printer", printers.first().mPrinterOut, context)
+        }
+
+        fun savePrintersByMap(context: Context, printers: Map<String, PrinterModel>) {
+            val data = Gson().toJson(printers)
+            Log.e("TAG", "savePrinters: "+data)
+            Log.e("TAG", "savePrinters: "+printers.toList().first().first)
+            insert("printers", data, context)
+            insert("context_printer", printers.toList().first().first, context)
+        }
+
+        fun  getContextPrinter(context: Context): String {
+           return  get("context_printer", context)
+        }
+
+        fun  getPrinters(context: Context):  Map<String, PrinterModel>  {
+            val result = get("printers", context)
+            if(result != "-1") {
+                val mapTypeToken = object : TypeToken<Map<String, PrinterModel>?>() {}.type
+                Log.e("TAG", "getPrinters: $result")
+              return  Gson().fromJson<Map<String, PrinterModel>>(result,mapTypeToken)
+            }
+            return  emptyMap()
+        }
+
+        fun resetPrinters(context: Context) {
+            Log.e("TAG", "resetPrinters: ")
+            insert("printers", "-1", context)
+            insert("context_printer", "-1", context)
+        }
+
+        fun activeSuccessFlag(context: Context) {
+            insert("success_check", "1", context)
+        }
+        fun resetSuccessFlag(context: Context) {
+            insert("success_check", "-1", context)
+        }
+
+        fun isActiveSuccessFlag(context: Context) :Boolean{
+            val result = get("success_check", context)
+           return result != "-1"
         }
 
     }

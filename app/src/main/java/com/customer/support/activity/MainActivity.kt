@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.RequiresApi
@@ -52,6 +53,16 @@ class MainActivity : AppCompatActivity() {
             service.putExtra("country", country.text.toString().trim())
             startService(service)
         }
+
+
+
+        Log.e("SEND:::","startService :::" )
+        val intent = Intent("com.pds.bistrov2.ChatApiReceiver")
+
+        intent.putExtra("id", "CHKPRINTCONFIG")
+        intent.setPackage("com.pds.bistrov2")
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
+        sendBroadcast(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
