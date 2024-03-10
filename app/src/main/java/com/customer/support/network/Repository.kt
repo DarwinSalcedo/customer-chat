@@ -1,5 +1,6 @@
 package com.customer.support.network
 
+import android.util.Log
 import com.customer.support.dao.Message
 import com.customer.support.dao.MessageRequest
 import com.customer.support.utilis.toFormatDate
@@ -9,6 +10,7 @@ class Repository {
     suspend fun sendMessages(
         messageRequest: MessageRequest
     ): Message? {
+        Log.e("TAG", "sendMessages::: " + messageRequest)
         if (messageRequest.message.startsWith(LOCAL_PREFIX_MARK)) {
             return Message(
                 Math.random().toString(),

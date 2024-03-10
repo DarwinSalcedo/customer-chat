@@ -1,6 +1,8 @@
 package com.customer.support.service.chathead
 
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.EditText
@@ -9,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.customer.support.R
+import com.customer.support.activity.MainActivity
 import com.customer.support.adaptor.MessagesAdapter
 import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
 import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
@@ -106,7 +109,12 @@ class Content(context: Context) : LinearLayout(context) {
         }
 
         menuBtn.setOnClickListener {
-            // drawerLayout.openDrawer(Gravity.START)
+            SharedPreferences.resetSettings(context)
+            Intent(context, MainActivity::class.java).apply {
+                flags = FLAG_ACTIVITY_NEW_TASK
+            }.also {
+                context.startActivity(it)
+            }
         }
 
         scaleSpring.addListener(object : SimpleSpringListener() {

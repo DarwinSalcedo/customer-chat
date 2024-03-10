@@ -9,7 +9,7 @@ import java.util.UUID
 
 class SharedPreferences {
     companion object {
-        val pref_name: String = "chat_data"
+        private val pref_name: String = "chat_data"
 
         fun insert(key: String, value: String, context: Context) {
             val sharedPreference = context.getSharedPreferences(pref_name, Context.MODE_PRIVATE)
@@ -54,24 +54,24 @@ class SharedPreferences {
 
         fun savePrintersByMap(context: Context, printers: Map<String, PrinterModel>) {
             val data = Gson().toJson(printers)
-            Log.e("TAG", "savePrinters: "+data)
-            Log.e("TAG", "savePrinters: "+printers.toList().first().first)
+            Log.e("TAG", "savePrinters: " + data)
+            Log.e("TAG", "savePrinters: " + printers.toList().first().first)
             insert("printers", data, context)
             insert("context_printer", printers.toList().first().first, context)
         }
 
-        fun  getContextPrinter(context: Context): String {
-           return  get("context_printer", context)
+        fun getContextPrinter(context: Context): String {
+            return get("context_printer", context)
         }
 
-        fun  getPrinters(context: Context):  Map<String, PrinterModel>  {
+        fun getPrinters(context: Context): Map<String, PrinterModel> {
             val result = get("printers", context)
-            if(result != "-1") {
+            if (result != "-1") {
                 val mapTypeToken = object : TypeToken<Map<String, PrinterModel>?>() {}.type
                 Log.e("TAG", "getPrinters: $result")
-              return  Gson().fromJson<Map<String, PrinterModel>>(result,mapTypeToken)
+                return Gson().fromJson<Map<String, PrinterModel>>(result, mapTypeToken)
             }
-            return  emptyMap()
+            return emptyMap()
         }
 
         fun resetPrinters(context: Context) {
@@ -83,14 +83,61 @@ class SharedPreferences {
         fun activeSuccessFlag(context: Context) {
             insert("success_check", "1", context)
         }
+
         fun resetSuccessFlag(context: Context) {
             insert("success_check", "-1", context)
         }
 
-        fun isActiveSuccessFlag(context: Context) :Boolean{
+        fun isActiveSuccessFlag(context: Context): Boolean {
             val result = get("success_check", context)
-           return result != "-1"
+            return result != "-1"
         }
 
+        fun setEmail(context: Context, value: String) {
+            insert("email", value, context)
+        }
+
+        fun getEmail(context: Context): String {
+            val result = get("email", context)
+            if (result != "-1") {
+                return result
+            }
+            return "test@pdssa.com.ar"
+        }
+
+        fun setCountry(context: Context, value: String) {
+            insert("country", value, context)
+        }
+
+        fun getCountry(context: Context): String {
+            val result = get("country", context)
+            if (result != "-1") {
+                return result
+            }
+            return "AR"
+        }
+        fun setName(context: Context, value: String) {
+            insert("name", value, context)
+        }
+
+        fun getName(context: Context): String {
+            val result = get("name", context)
+            if (result != "-1") {
+                return result
+            }
+            return "No-Name"
+        }
+
+        fun activeSettings(context: Context) {
+            insert("set_up", "1", context)
+        }
+        fun resetSettings(context: Context) {
+            insert("set_up", "-1", context)
+        }
+
+        fun isSettingUp(context: Context): Boolean {
+            val result = get("set_up", context)
+            return result != "-1"
+        }
     }
 }

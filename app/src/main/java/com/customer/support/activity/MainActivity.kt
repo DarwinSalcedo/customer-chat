@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.RequiresApi
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.customer.support.R
 import com.customer.support.service.UIService
 import com.customer.support.utilis.Constants.Companion.REQUEST_CODE
+import com.customer.support.utilis.SharedPreferences
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,35 +34,43 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE)
         }
 
+        if( SharedPreferences.isSettingUp(this)){
+            val service = Intent(this, UIService::class.java)
+            startService(service)
+            finish()
+        }
 
         start = findViewById(R.id.startService)
         email = findViewById(R.id.mail)
         country = findViewById(R.id.country)
         name = findViewById(R.id.name)
+
         start.setOnClickListener {
             startService()
         }
     }
 
 
-    fun startService() {
+    private fun startService() {
         if (!UIService.initialized && Settings.canDrawOverlays(this)) {
+            if (!email.text.isNullOrEmpty()) {
+                SharedPreferences.setEmail(this, email.text.toString().trim())
+            }
+
+            if (!country.text.isNullOrEmpty()) {
+                SharedPreferences.setCountry(this, country.text.toString().trim())
+            }
+
+            if (!name.text.isNullOrEmpty()) {
+                SharedPreferences.setName(this, name.text.toString().trim())
+            }
+
+            SharedPreferences.activeSettings(this)
+
             val service = Intent(this, UIService::class.java)
-            service.putExtra("name", name.text.toString().trim())
-            service.putExtra("email", email.text.toString().trim())
-            service.putExtra("country", country.text.toString().trim())
             startService(service)
+            finish()
         }
-
-
-
-        Log.e("SEND:::","startService :::" )
-        val intent = Intent("com.pds.bistrov2.ChatApiReceiver")
-
-        intent.putExtra("id", "CHKPRINTCONFIG")
-        intent.setPackage("com.pds.bistrov2")
-        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES)
-        sendBroadcast(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

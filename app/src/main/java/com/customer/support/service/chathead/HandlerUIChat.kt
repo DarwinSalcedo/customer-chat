@@ -2,7 +2,6 @@ package com.customer.support.service.chathead
 
 import android.util.Log
 import com.customer.support.dao.Message
-import com.customer.support.dao.MessageRequest
 import com.customer.support.network.Repository.Companion.CHKPRINTCONFIG
 import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
 import com.customer.support.network.Repository.Companion.SUCCESSCONTEXT
@@ -60,9 +59,12 @@ class HandlerUIChat(
 
 
     fun checkMessage(message: String) {
+
         UIService.instance.onProcessMessage(
-            MessageRequest(conversationId = conversationId, message)
-        ) { messageDao ->
+            conversationId = conversationId,
+            message = message
+        )
+        { messageDao ->
 
             Log.e("TAG", "checkMessage: ")
             val messageClean = messageDao?.message?.removeSuffix(CHKPRINTCONFIG)

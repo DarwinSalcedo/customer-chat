@@ -108,11 +108,17 @@ class UIService : Service() {
 
 
     fun onProcessMessage(
-        messageRequest: MessageRequest,
+        conversationId: String,
+        message: String,
         completion: (Message?) -> Unit
     ) {
         instance.serviceScope.launch {
-            val result = instance.repository.sendMessages(messageRequest = messageRequest)
+            val email = SharedPreferences.getEmail(context = this@UIService)
+            val country = SharedPreferences.getCountry(context = this@UIService)
+            val username = SharedPreferences.getName(context = this@UIService)
+            val request = MessageRequest(conversationId, message, email, country, username)
+
+            val result = instance.repository.sendMessages(messageRequest = request)
 
 
             if (instance.chatHeads.activeChatHead == null) {

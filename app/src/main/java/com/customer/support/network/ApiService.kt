@@ -8,8 +8,6 @@ import retrofit2.http.POST
 
 
 interface ApiService {
-
-
     @POST("api/V1/Conversation")
-    suspend fun sendMessage(@Body outgoingmessageRequest: MessageRequest): Response<MessageResponse>
+    suspend fun sendMessage(@Body request: MessageRequest): Response<MessageResponse>
 }

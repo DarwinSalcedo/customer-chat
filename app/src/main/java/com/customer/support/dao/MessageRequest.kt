@@ -7,11 +7,11 @@ data class MessageRequest(
     val conversationId: String,
     @SerializedName("Message")
     val message: String,
+    val UserMail: String,
+    val InstanceCode: String = "AR",
+    val UserName: String = "Test",
     private val StoreType: String = "Seleccionar",
     private val UserBizName: String = "",
-    private val InstanceCode: String = "AR",
-    private val UserMail: String = "test@pdssa.com.ar",
-    private val UserName: String = "Test",
     private val UserPhone: String = "",
     private val IsTest: Boolean = true
 )
