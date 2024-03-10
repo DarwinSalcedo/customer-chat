@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.customer.support.R
 import com.customer.support.service.UIService
 import com.customer.support.utilis.Constants.Companion.REQUEST_CODE
 import com.customer.support.utilis.SharedPreferences
+import com.facebook.rebound.BuildConfig
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var country: EditText
     private lateinit var name: EditText
     private lateinit var email: EditText
+    private lateinit var version: TextView
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,12 +37,13 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CODE)
         }
 
-        if( SharedPreferences.isSettingUp(this)){
+        if (SharedPreferences.isSettingUp(this)) {
             val service = Intent(this, UIService::class.java)
             startService(service)
             finish()
         }
-
+        version = findViewById(R.id.version)
+        version.text = "Version :: ${BuildConfig.VERSION_NAME}  ${BuildConfig.VERSION_CODE}"
         start = findViewById(R.id.startService)
         email = findViewById(R.id.mail)
         country = findViewById(R.id.country)
