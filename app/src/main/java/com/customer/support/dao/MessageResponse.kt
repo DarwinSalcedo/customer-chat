@@ -1,7 +1,7 @@
 package com.customer.support.dao
 
 
-data class RawMessageDao(
+data class MessageResponse(
     val message: String,
     val debugMessage: String,
 )

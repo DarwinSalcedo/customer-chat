@@ -1,6 +1,6 @@
 package com.customer.support.dao
 
-data class MessageDao(
+data class Message(
     val id: String,
     val conversationId: String,
     val sender: Boolean = false,

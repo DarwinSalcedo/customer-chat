@@ -2,7 +2,7 @@ package com.customer.support.dao
 
 import com.google.gson.annotations.SerializedName
 
-data class OutgoingMessageDao(
+data class MessageRequest(
     @SerializedName("ConversationId")
     val conversationId: String,
     @SerializedName("Message")

@@ -10,15 +10,15 @@ import android.webkit.WebView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.customer.support.R
-import com.customer.support.dao.ChatDao
+import com.customer.support.dao.Message
 import com.customer.support.network.Repository
 import com.customer.support.utilis.isUrl
 
-class SpecificThreadAdapter(
-    var messages: MutableList<ChatDao> = mutableListOf(),
+class MessagesAdapter(
+    var messages: MutableList<Message> = mutableListOf(),
     val context: Context
 ) :
-    RecyclerView.Adapter<SpecificThreadAdapter.SpecificViewHolder>() {
+    RecyclerView.Adapter<MessagesAdapter.SpecificViewHolder>() {
 
 
     private val TAG: String = "SpecificThreadAdapter"
@@ -38,7 +38,7 @@ class SpecificThreadAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpecificViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.specific_thread_items, parent, false)
-        messages.sortBy { it.time }
+        messages.sortBy { it.timestamp }
 
         return SpecificViewHolder(view)
     }
@@ -52,13 +52,13 @@ class SpecificThreadAdapter(
         val currentItem = messages[position]
         if (currentItem.sender) {
             holder.sendermsg.text = currentItem.message?.removePrefix(Repository.LOCAL_PREFIX_MARK)?.removeSuffix(Repository.PROCCESSCONTEXT)?.removeSuffix(Repository.SUCCESSCONTEXT)
-            "Hora:- ${currentItem.time.toString()}".also { holder.senderTime.text = it }
+            "Hora:- ${currentItem.timestamp.toString()}".also { holder.senderTime.text = it }
             holder.SenderCard.visibility = View.VISIBLE
             holder.AgentCard.visibility = View.GONE
         } else {
 
             holder.receivermsg.text = currentItem.message?.removePrefix(Repository.LOCAL_PREFIX_MARK)?.removeSuffix(Repository.PROCCESSCONTEXT)?.removeSuffix(Repository.SUCCESSCONTEXT)
-            "Hora:- ${currentItem.time.toString()}".also { holder.agentTime.text = it }
+            "Hora:- ${currentItem.timestamp.toString()}".also { holder.agentTime.text = it }
 
 
             holder.SenderCard.visibility = View.GONE

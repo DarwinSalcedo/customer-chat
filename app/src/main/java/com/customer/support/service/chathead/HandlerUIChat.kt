@@ -1,8 +1,11 @@
 package com.customer.support.service.chathead
 
 import android.util.Log
-import com.customer.support.dao.ChatDao
-import com.customer.support.dao.OutgoingMessageDao
+import com.customer.support.dao.Message
+import com.customer.support.dao.MessageRequest
+import com.customer.support.network.Repository.Companion.CHKPRINTCONFIG
+import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
+import com.customer.support.network.Repository.Companion.SUCCESSCONTEXT
 import com.customer.support.service.UIService
 import com.customer.support.utilis.toFormatDate
 
@@ -33,9 +36,9 @@ class HandlerUIChat(
         val lm = chatHeads.content.layoutManager
         val startIndex = adapter.messages.lastIndex
         adapter.messages.add(
-            ChatDao(
-                conversationId,
+            Message(
                 System.currentTimeMillis().toString(),
+                conversationId,
                 true,
                 message,
                 System.currentTimeMillis().toFormatDate()
@@ -58,22 +61,21 @@ class HandlerUIChat(
 
     fun checkMessage(message: String) {
         UIService.instance.onProcessMessage(
-            OutgoingMessageDao(conversationId = conversationId, message)
+            MessageRequest(conversationId = conversationId, message)
         ) { messageDao ->
 
-            if(message.contains("|PROCCESSCONTEXT") ||  message.contains("|SUCCESSCONTEXT")) return@onProcessMessage
-            Log.e("TAG", "checkMessage: ", )
-            val messageClean = messageDao?.message?.removeSuffix("|CHKPRINTCONFIG")
-                ?.removeSuffix("|PROCCESSCONTEXT")?.removeSuffix("|SUCCESSCONTEXT") ?: ""
+            Log.e("TAG", "checkMessage: ")
+            val messageClean = messageDao?.message?.removeSuffix(CHKPRINTCONFIG)
+                ?.removeSuffix(PROCCESSCONTEXT)?.removeSuffix(SUCCESSCONTEXT) ?: ""
             if (messageClean.isNotEmpty()) {
 
                 val chatHeads = UIService.instance.chatHeads
                 val adapter = chatHeads.content.messagesAdapter
 
                 adapter.messages.add(
-                    ChatDao(
-                        conversationId,
+                    Message(
                         System.currentTimeMillis().toString(),
+                        conversationId,
                         false,
                         messageClean,
                         System.currentTimeMillis().toFormatDate()
@@ -99,9 +101,9 @@ class HandlerUIChat(
         val lm = chatHeads.content.layoutManager
         val startIndex = adapter.messages.lastIndex
         adapter.messages.add(
-            ChatDao(
-                conversationId,
+            Message(
                 System.currentTimeMillis().toString(),
+                conversationId,
                 false,
                 message,
                 System.currentTimeMillis().toFormatDate()

@@ -16,8 +16,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.customer.support.R
 import com.customer.support.activity.MainActivity
-import com.customer.support.dao.MessageDao
-import com.customer.support.dao.OutgoingMessageDao
+import com.customer.support.dao.Message
+import com.customer.support.dao.MessageRequest
 import com.customer.support.network.Repository
 import com.customer.support.service.chathead.ChatHeads
 import com.customer.support.service.chathead.HandlerUIChat
@@ -108,11 +108,11 @@ class UIService : Service() {
 
 
     fun onProcessMessage(
-        outgoingMessageDao: OutgoingMessageDao,
-        completion: (MessageDao?) -> Unit
+        messageRequest: MessageRequest,
+        completion: (Message?) -> Unit
     ) {
         instance.serviceScope.launch {
-            val result = instance.repository.sendMessages(outgoingMessageDao = outgoingMessageDao)
+            val result = instance.repository.sendMessages(messageRequest = messageRequest)
 
 
             if (instance.chatHeads.activeChatHead == null) {

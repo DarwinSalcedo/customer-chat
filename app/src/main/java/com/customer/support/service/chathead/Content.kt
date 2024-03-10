@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.customer.support.R
-import com.customer.support.adaptor.SpecificThreadAdapter
+import com.customer.support.adaptor.MessagesAdapter
 import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
 import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
 import com.customer.support.network.Repository.Companion.SUCCESSCONTEXT
@@ -26,7 +26,7 @@ class Content(context: Context) : LinearLayout(context) {
 
 
     var messagesView: RecyclerView
-    var messagesAdapter = SpecificThreadAdapter(mutableListOf(), context)
+    var messagesAdapter = MessagesAdapter(mutableListOf(), context)
     var layoutManager = LinearLayoutManager(context)
 
 
@@ -97,7 +97,7 @@ class Content(context: Context) : LinearLayout(context) {
                         else if (SharedPreferences.getContextPrinter(context) != "-1")
                             LOCAL_PREFIX_MARK + " " + editText.text.toString() + " " + PROCCESSCONTEXT
                         else editText.text.toString()
-                    bubble?.handlerUIChat?.sendMessage(message)
+                    bubble?.handlerUIChat?.sendMessage(message.trim())
                     editText.text.clear()
 
                 }
@@ -177,7 +177,7 @@ class Content(context: Context) : LinearLayout(context) {
     }
 
     fun clearMessages() {
-        messagesAdapter = SpecificThreadAdapter(mutableListOf(), context)
+        messagesAdapter = MessagesAdapter(mutableListOf(), context)
         messagesView.adapter = messagesAdapter
     }
 }
