@@ -76,15 +76,15 @@ class HandlerReceiver : BroadcastReceiver() {
 
                 if (printerResponse.isConnected) {
 
-                    bubble?.handlerUIChat?.addAgentMessage("Se logro conxión exitosa con la impresora [" + printerResponse.printerOut.toBeauty() + "]")
+                    bubble?.handlerUIChat?.addAgentMessage("Se logro conexión exitosa con la impresora [" + printerResponse.printerOut.toBeauty() + "]")
 
                     bubble?.handlerUIChat?.addAgentMessage(
                         "Revise por favor que la impresora " + SharedPreferences.get(
                             "context_printer", context
                         )
-                            .toBeauty() + "\n" + "Revise por favor que la impresion fue exitosa.." +
-                                "\nCuando haya verificado presione:\n" +
-                                " 1 Si imprimio bien\n" + " 0 para cancelar"
+                            .toBeauty() + "\n\n"  +
+                                "Cuando haya verificado presione:\n" +
+                                " 2 Reintentar impresion\n"+" 1 Si imprimio bien\n" + " 0 Para cancelar"
                     )
 
                     SharedPreferences.activeSuccessFlag(context)
@@ -101,7 +101,7 @@ class HandlerReceiver : BroadcastReceiver() {
                             .toBeauty() + " este correctamente enchufada!\n"
                                 + "\nLuego apaguela y prendale nuevamente.\n"
                                 + "\nCuando haya verificado el estado de la impresora presione:\n"
-                                + " 1 para reintentar\n" + " 0 para cancelar"
+                                + " 1 Para reintentar\n" + " 0 Para cancelar"
                     )
 
                 }

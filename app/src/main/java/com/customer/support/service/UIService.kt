@@ -181,10 +181,19 @@ class UIService : Service() {
                         }.also {
                             sendBroadcast(it)
                         }
-                    } else {
+
+                    } else if (outgoingMessage.contains("1 ")) {
                         Intent("com.customer.chat.HANDLER").apply {
                             setPackage("com.customer.support")
                             putExtra("type", "SUCCESSCONTEXT-LOCAL")
+
+                        }.also {
+                            sendBroadcast(it)
+                        }
+                    }else{
+                        Intent("com.customer.chat.HANDLER").apply {
+                            setPackage("com.customer.support")
+                            putExtra("type", "TRYAGAING-LOCAL")
 
                         }.also {
                             sendBroadcast(it)

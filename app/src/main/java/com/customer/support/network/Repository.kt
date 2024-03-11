@@ -72,6 +72,7 @@ class Repository {
             put("1 |PROCCESSCONTEXT", "Seleccion : 1 |PROCCESSCONTEXT")
             put("0 |SUCCESSCONTEXT", "Seleccion : 0 |SUCCESSCONTEXT")
             put("1 |SUCCESSCONTEXT", "Seleccion : 1 |SUCCESSCONTEXT")
+            put("2 |SUCCESSCONTEXT", "Seleccion : 2 |SUCCESSCONTEXT")
         }
 
         const val LOCAL_PREFIX_MARK = "answering-from-device:"
