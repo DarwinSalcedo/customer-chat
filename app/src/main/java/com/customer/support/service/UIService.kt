@@ -18,7 +18,14 @@ import com.customer.support.R
 import com.customer.support.activity.MainActivity
 import com.customer.support.dao.Message
 import com.customer.support.dao.MessageRequest
+import com.customer.support.dao.MessageType
 import com.customer.support.network.Repository
+import com.customer.support.network.Repository.Companion.CHKPRINTCONFIG
+import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
+import com.customer.support.network.Repository.Companion.PROCCESSCONTEXTCANCELAR
+import com.customer.support.network.Repository.Companion.SUCCESSCONTEXTCANCELAR
+import com.customer.support.network.Repository.Companion.SUCCESSCONTEXTPRINTAGAIN
+import com.customer.support.network.Repository.Companion.SUCCESSCONTEXTPRINTOK
 import com.customer.support.service.chathead.ChatHeads
 import com.customer.support.service.chathead.HandlerUIChat
 import com.customer.support.utilis.SharedPreferences
@@ -109,17 +116,17 @@ class UIService : Service() {
 
     fun onProcessMessage(
         conversationId: String,
-        message: String,
+        message: MessageType,
         completion: (Message?) -> Unit
     ) {
         instance.serviceScope.launch {
             val email = SharedPreferences.getEmail(context = this@UIService)
             val country = SharedPreferences.getCountry(context = this@UIService)
             val username = SharedPreferences.getName(context = this@UIService)
-            val request = MessageRequest(conversationId, message, email, country, username)
+            val request = MessageRequest(conversationId, message.value, email, country, username)
 
-            val result = instance.repository.sendMessages(messageRequest = request)
-
+            val result =
+                instance.repository.sendMessages(messageRequest = request, messageType = message)
 
             if (instance.chatHeads.activeChatHead == null) {
                 instance.chatHeads.topChatHead?.let {
@@ -129,88 +136,87 @@ class UIService : Service() {
             }
             result?.let { completion(result) }
 
-            checkToSendBroadcast(result?.message ?: "")
+            checkToSendBroadcast(result)
 
         }
-
     }
 
-    private fun checkToSendBroadcast(outgoingMessage: String) {
-        val decodeData = outgoingMessage.split("|")
-        if (decodeData.size > 1) {
-            when (decodeData.last()) {
-                "CHKPRINTCONFIG" -> {
-                    val intent = Intent("com.pds.bistrov2.ChatApiReceiver")
-                    intent.putExtra("type", "CHKPRINTCONFIG")
-                    Log.e("SEND:::", "checkToSendBroadcast :::" + outgoingMessage)
-                    intent.setPackage("com.pds.bistrov2")
-                    sendBroadcast(intent)
+    /**
+     * The symbol "|"   means there is a command to process
+     * EX: "lorem ipsum |COMMANDTOPROCCESS"
+     */
+    private fun checkToSendBroadcast(outgoingMessage: Message?) {
+        Log.e("SEND:::", "checkToSendBroadcast :::" + outgoingMessage.toString())
+        when (outgoingMessage?.message?.type) {
+            CHKPRINTCONFIG -> {
+                val intent = Intent("com.pds.bistrov2.ChatApiReceiver")
+                intent.putExtra("type", "CHKPRINTCONFIG")
+                Log.e("SEND:::", "checkToSendBroadcast :::" + outgoingMessage)
+                intent.setPackage("com.pds.bistrov2")
+                sendBroadcast(intent)
+            }
+
+            PROCCESSCONTEXTCANCELAR -> {
+                Intent("com.customer.chat.HANDLER").apply {
+                    setPackage("com.customer.support")
+                    putExtra("type", "CANCELAR-LOCAL")
+
+                }.also {
+                    sendBroadcast(it)
                 }
+            }
 
-                "PROCCESSCONTEXT" -> {
+            PROCCESSCONTEXT -> {
+                Intent("com.customer.chat.HANDLER").apply {
+                    setPackage("com.customer.support")
+                    putExtra("type", "TRYAGAING-LOCAL")
 
-                    Log.e("SEND:::", "PROCCESSCONTEXT :::" + outgoingMessage)
-                    if (outgoingMessage.contains("0 ")) {
-                        Intent("com.customer.chat.HANDLER").apply {
-                            setPackage("com.customer.support")
-                            putExtra("type", "CANCELAR-LOCAL")
-
-                        }.also {
-                            sendBroadcast(it)
-                        }
-                    } else {
-                        Intent("com.customer.chat.HANDLER").apply {
-                            setPackage("com.customer.support")
-                            putExtra("type", "TRYAGAING-LOCAL")
-
-                        }.also {
-                            sendBroadcast(it)
-                        }
-                    }
+                }.also {
+                    sendBroadcast(it)
                 }
+            }
 
-                "SUCCESSCONTEXT" -> {
+            SUCCESSCONTEXTPRINTAGAIN -> {
+                Intent("com.customer.chat.HANDLER").apply {
+                    setPackage("com.customer.support")
+                    putExtra("type", "TRYAGAING-LOCAL")
 
-                    Log.e("SEND:::", "SUCCESSCONTEXT :::" + outgoingMessage)
-
-                    if (outgoingMessage.contains("0 ")) {
-                        Intent("com.customer.chat.HANDLER").apply {
-                            setPackage("com.customer.support")
-                            putExtra("type", "CANCELAR-LOCAL")
-
-                        }.also {
-                            sendBroadcast(it)
-                        }
-
-                    } else if (outgoingMessage.contains("1 ")) {
-                        Intent("com.customer.chat.HANDLER").apply {
-                            setPackage("com.customer.support")
-                            putExtra("type", "SUCCESSCONTEXT-LOCAL")
-
-                        }.also {
-                            sendBroadcast(it)
-                        }
-                    }else{
-                        Intent("com.customer.chat.HANDLER").apply {
-                            setPackage("com.customer.support")
-                            putExtra("type", "TRYAGAING-LOCAL")
-
-                        }.also {
-                            sendBroadcast(it)
-                        }
-                    }
-
-
+                }.also {
+                    sendBroadcast(it)
                 }
+            }
 
+            SUCCESSCONTEXTPRINTOK -> {
+                Intent("com.customer.chat.HANDLER").apply {
+                    setPackage("com.customer.support")
+                    putExtra("type", "SUCCESSCONTEXT-LOCAL")
+
+                }.also {
+                    sendBroadcast(it)
+                }
+            }
+
+
+            SUCCESSCONTEXTCANCELAR -> {
+                Intent("com.customer.chat.HANDLER").apply {
+                    setPackage("com.customer.support")
+                    putExtra("type", "CANCELAR-LOCAL")
+
+                }.also {
+                    sendBroadcast(it)
+                }
+            }
+
+            else -> {
+                println("NOTHING TO PROCESS . . .")
             }
         }
+
     }
 
     private fun startUIView() {
 
         runOnMainLoop {
-
             instance.chatHeads.add(
                 HandlerUIChat(
                     conversationId = SharedPreferences.retrieveConversationId(this),

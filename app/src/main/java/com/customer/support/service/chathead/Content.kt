@@ -4,19 +4,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
+import android.util.Log
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.customer.support.R
 import com.customer.support.activity.MainActivity
-import com.customer.support.adaptor.MessagesAdapter
+import com.customer.support.adapter.MessagesAdapter
+import com.customer.support.adapter.QuickButtonsAdapter
+import com.customer.support.adapter.QuickButtonsAdapter.ItemCallback
+import com.customer.support.dao.MessageType
+import com.customer.support.domain.QuickButtonQuestion
 import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
-import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
-import com.customer.support.network.Repository.Companion.SUCCESSCONTEXT
 import com.customer.support.service.UIService
 import com.customer.support.utilis.SharedPreferences
 import com.facebook.rebound.SimpleSpringListener
@@ -31,17 +34,15 @@ class Content(context: Context) : LinearLayout(context) {
 
     var messagesView: RecyclerView
     var messagesAdapter = MessagesAdapter(mutableListOf(), context)
+
+    var quickResponsesView: RecyclerView
+    var quickButtonsAdapter: QuickButtonsAdapter
     var layoutManager = LinearLayoutManager(context)
 
 
     var menuBtn: LinearLayout
     var mainCointainer: LinearLayout
     var mainCointainerA: LinearLayout
-
-    var option1: FrameLayout
-    var option2: FrameLayout
-    var option3: FrameLayout
-    var option4: FrameLayout
 
 
     init {
@@ -52,11 +53,19 @@ class Content(context: Context) : LinearLayout(context) {
         mainCointainer = findViewById(R.id.mainContainerB)
         mainCointainerA = findViewById(R.id.mainContainerA)
 
-        option1 = findViewById(R.id.option1)
-        option2 = findViewById(R.id.option2)
-        option3 = findViewById(R.id.option3)
-        option4 = findViewById(R.id.option4)
+        quickResponsesView = findViewById(R.id.quickResponses)
+        quickResponsesView.layoutManager = LinearLayoutManager(context)
 
+        quickButtonsAdapter = QuickButtonsAdapter(
+            context = context,
+            itemCallback = ItemCallback {
+                sendMessagesByOption(
+                    it
+                )
+            }
+        )
+
+        quickResponsesView.adapter = quickButtonsAdapter
 
         layoutManager.stackFromEnd = true
 
@@ -77,17 +86,7 @@ class Content(context: Context) : LinearLayout(context) {
 
 
         newChat.setOnClickListener {
-            SharedPreferences.resetPrinters(context)
-            SharedPreferences.resetSuccessFlag(context)
-            UIService.instance.chatHeads.activeChatHead.let {
-                it?.handlerUIChat?.clearMessages()
-
-                val id = SharedPreferences.renewConversationId(context)
-                val chatHead = UIService.instance.chatHeads.activeChatHead!!
-
-                chatHead.handlerUIChat.updateChannel(id)
-
-            }
+            resetChat()
         }
 
         sendBtn.setOnClickListener {
@@ -95,13 +94,21 @@ class Content(context: Context) : LinearLayout(context) {
             sendBtn.postOnAnimationDelayed({
                 if (!editText.text.isNullOrEmpty()) {
                     //It should check if there is a context printer running
-                    val message =
-                        if (SharedPreferences.isActiveSuccessFlag(context))
-                            LOCAL_PREFIX_MARK + " " + editText.text.toString() + " " + SUCCESSCONTEXT
-                        else if (SharedPreferences.getContextPrinter(context) != "-1")
-                            LOCAL_PREFIX_MARK + " " + editText.text.toString() + " " + PROCCESSCONTEXT
-                        else editText.text.toString()
-                    bubble?.handlerUIChat?.sendMessage(message.trim())
+
+                    if (SharedPreferences.isActiveSuccessFlag(context) || (SharedPreferences.getContextPrinter(
+                            context
+                        ) != "-1")
+                    )
+                        Toast.makeText(
+                            context,
+                            "Usa las opciones de los botones",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                    else {
+                        bubble?.handlerUIChat?.sendMessage(editText.text.toString().trim())
+                    }
+
                     editText.text.clear()
 
                 }
@@ -143,42 +150,63 @@ class Content(context: Context) : LinearLayout(context) {
 
         scaleSpring.currentValue = 0.0
 
-        option1.setOnClickListener {
-            sendMessagesByOption(
-                sendBtn,
-                option1,
-                LOCAL_PREFIX_MARK + "Tengo un problema con una impresora"
-            )
-        }
-        option2.setOnClickListener {
+        /*  option1.setOnClickListener {
+              sendMessagesByOption(
+                  sendBtn,
+                  option1,
+                  LOCAL_PREFIX_MARK + "Tengo un problema con una impresora"
+              )
+          }
+          option2.setOnClickListener {
 
-            sendMessagesByOption(sendBtn, option2, LOCAL_PREFIX_MARK + "Como aplico descuentos?")
+              sendMessagesByOption(sendBtn, option2, LOCAL_PREFIX_MARK + "Como aplico descuentos?")
 
-        }
-        option3.setOnClickListener {
-            sendMessagesByOption(
-                sendBtn,
-                option3,
-                LOCAL_PREFIX_MARK + "Como aplico descuentos no youtube?"
-            )
+          }
+          option3.setOnClickListener {
+              sendMessagesByOption(
+                  sendBtn,
+                  option3,
+                  LOCAL_PREFIX_MARK + "Como aplico descuentos no youtube?"
+              )
 
-        }
-        option4.setOnClickListener {
-            sendMessagesByOption(
-                sendBtn,
-                option4,
-                LOCAL_PREFIX_MARK + "Necesito cambiar y actualizar los precios"
-            )
+          }
+          option4.setOnClickListener {
+
+          }*/
+    }
+
+    fun resetChat() {
+        Log.e("TAG", "resetChat: ")
+        quickButtonsAdapter.reset()
+        SharedPreferences.resetPrinters(context)
+        SharedPreferences.resetSuccessFlag(context)
+        UIService.instance.chatHeads.activeChatHead.let {
+            it?.handlerUIChat?.clearMessages()
+
+            val id = SharedPreferences.renewConversationId(context)
+            val chatHead = UIService.instance.chatHeads.activeChatHead!!
+
+            chatHead.handlerUIChat.updateChannel(id)
+
         }
     }
 
-    private fun sendMessagesByOption(sendBtn: LinearLayout, button: FrameLayout, text: String) {
-        button.isEnabled = false
+    private fun initAdapterResponses() {
+
+    }
+
+    private fun sendMessagesByOption(quickButtonQuestion: QuickButtonQuestion) {
         val bubble = UIService.instance.chatHeads.activeChatHead
-        sendBtn.postOnAnimationDelayed({
-            bubble?.handlerUIChat?.sendMessage(text)
-            button.isEnabled = true
-        }, 500)
+        this.postOnAnimationDelayed({
+            bubble?.handlerUIChat?.addMessage(
+                MessageType(
+                    value = quickButtonQuestion.question,
+                    mark = LOCAL_PREFIX_MARK,
+                    type = quickButtonQuestion.typeMessage,
+                    key = quickButtonQuestion.key
+                )
+            )
+        }, 50)
     }
 
 

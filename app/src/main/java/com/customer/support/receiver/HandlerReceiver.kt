@@ -8,6 +8,8 @@ import com.customer.support.activity.MainActivity
 import com.customer.support.domain.PrinterConfiguration
 import com.customer.support.domain.PrinterModel
 import com.customer.support.domain.PrinterResponse
+import com.customer.support.domain.QuickButtonQuestion
+import com.customer.support.network.Repository
 import com.customer.support.service.UIService
 import com.customer.support.utilis.SharedPreferences
 import com.customer.support.utilis.toBeauty
@@ -82,9 +84,27 @@ class HandlerReceiver : BroadcastReceiver() {
                         "Revise por favor que la impresora " + SharedPreferences.get(
                             "context_printer", context
                         )
-                            .toBeauty() + "\n\n"  +
-                                "Cuando haya verificado presione:\n" +
-                                " 2 Reintentar impresion\n"+" 1 Si imprimio bien\n" + " 0 Para cancelar"
+                            .toBeauty() + "\n\n" +
+                                "Cuando haya verificado, seleccione una opcion\n"
+                    )
+
+                    UIService.instance.chatHeads.content.quickButtonsAdapter.setNewQuickButtonQuestions(
+                        mutableListOf(
+                            QuickButtonQuestion(
+                                "Reintentar impresion",
+                                "scp1",
+                                Repository.SUCCESSCONTEXTPRINTAGAIN
+                            ),
+                            QuickButtonQuestion(
+                                "Si imprimio bien",
+                                "scp2" + Repository.SUCCESSCONTEXTPRINTOK
+                            ),
+                            QuickButtonQuestion(
+                                "Cancelar",
+                                "scp3",
+                                Repository.SUCCESSCONTEXTCANCELAR
+                            ),
+                        )
                     )
 
                     SharedPreferences.activeSuccessFlag(context)
@@ -100,8 +120,22 @@ class HandlerReceiver : BroadcastReceiver() {
                         )
                             .toBeauty() + " este correctamente enchufada!\n"
                                 + "\nLuego apaguela y prendale nuevamente.\n"
-                                + "\nCuando haya verificado el estado de la impresora presione:\n"
-                                + " 1 Para reintentar\n" + " 0 Para cancelar"
+                                + "\nCuando haya verificado el estado de la impresora, seleccione una opcion\n"
+                    )
+
+                    UIService.instance.chatHeads.content.quickButtonsAdapter.setNewQuickButtonQuestions(
+                        mutableListOf(
+                            QuickButtonQuestion(
+                                "Reintentar impresion",
+                                "kpc2",
+                                Repository.PROCCESSCONTEXT
+                            ),
+
+                            QuickButtonQuestion(
+                                "Cancelar",
+                                "kpc1", Repository.PROCCESSCONTEXTCANCELAR
+                            ),
+                        )
                     )
 
                 }
@@ -190,19 +224,8 @@ class HandlerReceiver : BroadcastReceiver() {
             "CANCELAR-LOCAL" -> {
 
                 Log.e("TAG", "onReceive: CANCELAR")
-                SharedPreferences.resetPrinters(context)
-                SharedPreferences.resetSuccessFlag(context)
+                UIService.instance.chatHeads.content.resetChat()
 
-
-                UIService.instance.chatHeads.activeChatHead.let {
-                    it?.handlerUIChat?.clearMessages()
-
-                    val id = SharedPreferences.renewConversationId(context)
-                    val chatHead = UIService.instance.chatHeads.activeChatHead!!
-
-                    chatHead.handlerUIChat.updateChannel(id)
-
-                }
             }
 
             "STARTSERVICE" -> {

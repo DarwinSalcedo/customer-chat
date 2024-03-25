@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,113 +17,31 @@
             android:id="@+id/mainContainerA"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginEnd="2dp"
             android:layout_weight=".5"
-            android:orientation="vertical" >
+            android:gravity="end"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/internOptionsContainer"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:layout_gravity="end"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="horizontal">
 
-                <FrameLayout
-                    android:id="@+id/option1"
-                    android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:clickable="true"
-                    android:clipChildren="true"
-                    android:focusable="true"
-                    android:background="@drawable/input_rounded"
-                    >
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="Tengo un problema con una impresora"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="#fff"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textAlignment="center"
-                        android:gravity="center"/>
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/option2"
-                    android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:clickable="true"
-                    android:clipChildren="true"
-                    android:focusable="true"
-                    android:background="@drawable/input_rounded">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="Como aplico descuentos?"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="#fff"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textAlignment="center"
-                        android:gravity="center"/>
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/option3"
-                    android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:clickable="true"
-                    android:clipChildren="true"
-                    android:focusable="true"
-                    android:background="@drawable/input_rounded">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="Como aplico descuentos? no youtube"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="#fff"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textAlignment="center"
-                        android:gravity="center"
-                        />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/option4"
-                    android:layout_width="200dp"
-                    android:layout_height="140dp"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:clickable="true"
-                    android:clipChildren="true"
-                    android:focusable="true"
-                    android:background="@drawable/input_rounded">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="Necesito cambiar y actualizar los precios"
-                        android:fontFamily="sans-serif-medium"
-                        android:textColor="#fff"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textAlignment="center"
-                        android:gravity="center"
-                        />
-                </FrameLayout>
-
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/quickResponses"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textAlignment="textEnd"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/quick_response_items" />
             </LinearLayout>
+
 
         </LinearLayout>
 
@@ -146,16 +65,16 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="70dp"
                     android:background="@drawable/toolbar_bg"
                     android:clipToPadding="false"
                     android:elevation="8dp"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:padding="1dp">
 
                     <LinearLayout
                         android:id="@+id/menu_btn"
-                        android:layout_width="40dp"
+                        android:layout_width="60dp"
                         android:layout_height="match_parent"
                         android:clickable="true"
                         android:focusable="true"
@@ -163,9 +82,8 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="24dp"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="2dp"
                             android:alpha="0.54"
                             android:src="@drawable/baseline_settings_24" />
                     </LinearLayout>
@@ -174,7 +92,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
@@ -207,7 +126,7 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="24dp"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="2dp"
                             android:alpha="0.54"
@@ -239,12 +158,13 @@
                         android:layout_weight="1"
                         android:background="@drawable/input_rounded"
                         android:hint="Aa"
+                        android:imeOptions="actionDone"
                         android:padding="8dp"
                         android:paddingStart="12dp"
                         android:paddingEnd="0dp"
                         android:textColor="#fff"
                         android:textColorHint="#8Cffffff"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
 
                     <LinearLayout
                         android:id="@+id/chat_send"

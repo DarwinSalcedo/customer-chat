@@ -2,9 +2,7 @@ package com.customer.support.service.chathead
 
 import android.util.Log
 import com.customer.support.dao.Message
-import com.customer.support.network.Repository.Companion.CHKPRINTCONFIG
-import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
-import com.customer.support.network.Repository.Companion.SUCCESSCONTEXT
+import com.customer.support.dao.MessageType
 import com.customer.support.service.UIService
 import com.customer.support.utilis.toFormatDate
 
@@ -26,7 +24,7 @@ class HandlerUIChat(
         UIService.instance.chatHeads.content.clearMessages()
     }
 
-    fun addMessage(message: String, checkMessage: Boolean = true) {
+    fun addMessage(message: MessageType) {
 
         val chatHeads = UIService.instance.chatHeads
 
@@ -54,22 +52,20 @@ class HandlerUIChat(
             chatHeads.content.messagesView.scrollToPosition(adapter.messages.lastIndex)
         }
 
-        if (checkMessage) checkMessage(message)
+        checkMessage(message)
     }
 
 
-    fun checkMessage(message: String) {
+    fun checkMessage(message: MessageType) {
 
         UIService.instance.onProcessMessage(
             conversationId = conversationId,
             message = message
         )
-        { messageDao ->
+        { _messageProcessed ->
 
-            Log.e("TAG", "checkMessage: ")
-            val messageClean = messageDao?.message?.removeSuffix(CHKPRINTCONFIG)
-                ?.removeSuffix(PROCCESSCONTEXT)?.removeSuffix(SUCCESSCONTEXT) ?: ""
-            if (messageClean.isNotEmpty()) {
+            Log.e("TAG", "checkMessage: :: _messageProcessed :: $message")
+            if (!_messageProcessed?.message?.value.isNullOrEmpty()) {
 
                 val chatHeads = UIService.instance.chatHeads
                 val adapter = chatHeads.content.messagesAdapter
@@ -79,7 +75,12 @@ class HandlerUIChat(
                         System.currentTimeMillis().toString(),
                         conversationId,
                         false,
-                        messageClean,
+                        MessageType(
+                            _messageProcessed?.message?.value ?: "Error",
+                            _messageProcessed?.message?.type?:"DEFAULT",
+                            _messageProcessed?.message?.mark?:"DEFAULT",
+                            _messageProcessed?.message?.key?:""
+                        ),
                         System.currentTimeMillis().toFormatDate()
                     )
                 )
@@ -107,7 +108,7 @@ class HandlerUIChat(
                 System.currentTimeMillis().toString(),
                 conversationId,
                 false,
-                message,
+                MessageType(message),
                 System.currentTimeMillis().toFormatDate()
             )
         )
@@ -126,7 +127,7 @@ class HandlerUIChat(
 
 
     fun sendMessage(text: String?) {
-        text?.let { addMessage(it) }
+        text?.let { addMessage(MessageType(text)) }
     }
 
 
