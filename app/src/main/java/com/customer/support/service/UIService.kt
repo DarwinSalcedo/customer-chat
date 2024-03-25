@@ -19,13 +19,13 @@ import com.customer.support.activity.MainActivity
 import com.customer.support.dao.Message
 import com.customer.support.dao.MessageRequest
 import com.customer.support.dao.MessageType
+import com.customer.support.network.LocalData.Companion.CHKPRINTCONFIG
+import com.customer.support.network.LocalData.Companion.PROCCESSCONTEXT
+import com.customer.support.network.LocalData.Companion.PROCCESSCONTEXTCANCELAR
+import com.customer.support.network.LocalData.Companion.SUCCESSCONTEXTCANCELAR
+import com.customer.support.network.LocalData.Companion.SUCCESSCONTEXTPRINTAGAIN
+import com.customer.support.network.LocalData.Companion.SUCCESSCONTEXTPRINTOK
 import com.customer.support.network.Repository
-import com.customer.support.network.Repository.Companion.CHKPRINTCONFIG
-import com.customer.support.network.Repository.Companion.PROCCESSCONTEXT
-import com.customer.support.network.Repository.Companion.PROCCESSCONTEXTCANCELAR
-import com.customer.support.network.Repository.Companion.SUCCESSCONTEXTCANCELAR
-import com.customer.support.network.Repository.Companion.SUCCESSCONTEXTPRINTAGAIN
-import com.customer.support.network.Repository.Companion.SUCCESSCONTEXTPRINTOK
 import com.customer.support.service.chathead.ChatHeads
 import com.customer.support.service.chathead.HandlerUIChat
 import com.customer.support.utilis.SharedPreferences
@@ -128,6 +128,7 @@ class UIService : Service() {
             val result =
                 instance.repository.sendMessages(messageRequest = request, messageType = message)
 
+            //update notification quantity
             if (instance.chatHeads.activeChatHead == null) {
                 instance.chatHeads.topChatHead?.let {
                     it.handlerUIChat.notifications = 1
@@ -136,83 +137,11 @@ class UIService : Service() {
             }
             result?.let { completion(result) }
 
-            checkToSendBroadcast(result)
+            BroadcastUtil.emit(this@UIService, result)
 
         }
     }
 
-    /**
-     * The symbol "|"   means there is a command to process
-     * EX: "lorem ipsum |COMMANDTOPROCCESS"
-     */
-    private fun checkToSendBroadcast(outgoingMessage: Message?) {
-        Log.e("SEND:::", "checkToSendBroadcast :::" + outgoingMessage.toString())
-        when (outgoingMessage?.message?.type) {
-            CHKPRINTCONFIG -> {
-                val intent = Intent("com.pds.bistrov2.ChatApiReceiver")
-                intent.putExtra("type", "CHKPRINTCONFIG")
-                Log.e("SEND:::", "checkToSendBroadcast :::" + outgoingMessage)
-                intent.setPackage("com.pds.bistrov2")
-                sendBroadcast(intent)
-            }
-
-            PROCCESSCONTEXTCANCELAR -> {
-                Intent("com.customer.chat.HANDLER").apply {
-                    setPackage("com.customer.support")
-                    putExtra("type", "CANCELAR-LOCAL")
-
-                }.also {
-                    sendBroadcast(it)
-                }
-            }
-
-            PROCCESSCONTEXT -> {
-                Intent("com.customer.chat.HANDLER").apply {
-                    setPackage("com.customer.support")
-                    putExtra("type", "TRYAGAING-LOCAL")
-
-                }.also {
-                    sendBroadcast(it)
-                }
-            }
-
-            SUCCESSCONTEXTPRINTAGAIN -> {
-                Intent("com.customer.chat.HANDLER").apply {
-                    setPackage("com.customer.support")
-                    putExtra("type", "TRYAGAING-LOCAL")
-
-                }.also {
-                    sendBroadcast(it)
-                }
-            }
-
-            SUCCESSCONTEXTPRINTOK -> {
-                Intent("com.customer.chat.HANDLER").apply {
-                    setPackage("com.customer.support")
-                    putExtra("type", "SUCCESSCONTEXT-LOCAL")
-
-                }.also {
-                    sendBroadcast(it)
-                }
-            }
-
-
-            SUCCESSCONTEXTCANCELAR -> {
-                Intent("com.customer.chat.HANDLER").apply {
-                    setPackage("com.customer.support")
-                    putExtra("type", "CANCELAR-LOCAL")
-
-                }.also {
-                    sendBroadcast(it)
-                }
-            }
-
-            else -> {
-                println("NOTHING TO PROCESS . . .")
-            }
-        }
-
-    }
 
     private fun startUIView() {
 

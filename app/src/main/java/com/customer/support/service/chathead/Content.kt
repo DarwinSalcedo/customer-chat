@@ -19,7 +19,7 @@ import com.customer.support.adapter.QuickButtonsAdapter
 import com.customer.support.adapter.QuickButtonsAdapter.ItemCallback
 import com.customer.support.dao.MessageType
 import com.customer.support.domain.QuickButtonQuestion
-import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
+import com.customer.support.network.LocalData
 import com.customer.support.service.UIService
 import com.customer.support.utilis.SharedPreferences
 import com.facebook.rebound.SimpleSpringListener
@@ -150,29 +150,6 @@ class Content(context: Context) : LinearLayout(context) {
 
         scaleSpring.currentValue = 0.0
 
-        /*  option1.setOnClickListener {
-              sendMessagesByOption(
-                  sendBtn,
-                  option1,
-                  LOCAL_PREFIX_MARK + "Tengo un problema con una impresora"
-              )
-          }
-          option2.setOnClickListener {
-
-              sendMessagesByOption(sendBtn, option2, LOCAL_PREFIX_MARK + "Como aplico descuentos?")
-
-          }
-          option3.setOnClickListener {
-              sendMessagesByOption(
-                  sendBtn,
-                  option3,
-                  LOCAL_PREFIX_MARK + "Como aplico descuentos no youtube?"
-              )
-
-          }
-          option4.setOnClickListener {
-
-          }*/
     }
 
     fun resetChat() {
@@ -191,17 +168,13 @@ class Content(context: Context) : LinearLayout(context) {
         }
     }
 
-    private fun initAdapterResponses() {
-
-    }
-
     private fun sendMessagesByOption(quickButtonQuestion: QuickButtonQuestion) {
         val bubble = UIService.instance.chatHeads.activeChatHead
         this.postOnAnimationDelayed({
             bubble?.handlerUIChat?.addMessage(
                 MessageType(
                     value = quickButtonQuestion.question,
-                    mark = LOCAL_PREFIX_MARK,
+                    mark = LocalData.LOCAL_PREFIX_MARK,
                     type = quickButtonQuestion.typeMessage,
                     key = quickButtonQuestion.key
                 )

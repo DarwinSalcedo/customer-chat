@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.customer.support.R
 import com.customer.support.domain.QuickButtonQuestion
-import com.customer.support.network.Repository.Companion.LOCAL_PREFIX_MARK
+import com.customer.support.network.LocalData
 
 class QuickButtonsAdapter(
-    var quickButtonQuestions: MutableList<QuickButtonQuestion> = defaultOptions,
+    var quickButtonQuestions: MutableList<QuickButtonQuestion> = LocalData.defaultOptions,
     val context: Context,
     val itemCallback: ItemCallback
 ) :
@@ -23,12 +23,15 @@ class QuickButtonsAdapter(
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setNewQuickButtonQuestions(newList: MutableList<QuickButtonQuestion>) {
         this.quickButtonQuestions = newList
         notifyDataSetChanged()
     }
+
+    @SuppressLint("NotifyDataSetChanged")
     fun reset() {
-        this.quickButtonQuestions = defaultOptions
+        this.quickButtonQuestions = LocalData.defaultOptions
         notifyDataSetChanged()
     }
 
@@ -42,22 +45,6 @@ class QuickButtonsAdapter(
         holder.bind(currentItem, this.itemCallback)
     }
 
-    companion object {
-        val defaultOptions = mutableListOf(
-            QuickButtonQuestion(
-                "Tengo un problema con una impresora",
-                 "k1"
-            ),
-            QuickButtonQuestion(
-                "Como aplico descuentos?",
-                  "k2"
-            ),
-            QuickButtonQuestion(
-                "Necesito cambiar y actualizar los precios",
-                 "k3"
-            )
-        )
-    }
 
     class ItemCallback(val clickListener: (data: QuickButtonQuestion) -> Unit) {
         fun onClick(data: QuickButtonQuestion) = clickListener(data)

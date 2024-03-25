@@ -9,7 +9,7 @@ import com.customer.support.domain.PrinterConfiguration
 import com.customer.support.domain.PrinterModel
 import com.customer.support.domain.PrinterResponse
 import com.customer.support.domain.QuickButtonQuestion
-import com.customer.support.network.Repository
+import com.customer.support.network.LocalData
 import com.customer.support.service.UIService
 import com.customer.support.utilis.SharedPreferences
 import com.customer.support.utilis.toBeauty
@@ -93,16 +93,16 @@ class HandlerReceiver : BroadcastReceiver() {
                             QuickButtonQuestion(
                                 "Reintentar impresion",
                                 "scp1",
-                                Repository.SUCCESSCONTEXTPRINTAGAIN
+                                LocalData.SUCCESSCONTEXTPRINTAGAIN
                             ),
                             QuickButtonQuestion(
                                 "Si imprimio bien",
-                                "scp2" + Repository.SUCCESSCONTEXTPRINTOK
+                                "scp2" + LocalData.SUCCESSCONTEXTPRINTOK
                             ),
                             QuickButtonQuestion(
                                 "Cancelar",
                                 "scp3",
-                                Repository.SUCCESSCONTEXTCANCELAR
+                                LocalData.SUCCESSCONTEXTCANCELAR
                             ),
                         )
                     )
@@ -128,12 +128,12 @@ class HandlerReceiver : BroadcastReceiver() {
                             QuickButtonQuestion(
                                 "Reintentar impresion",
                                 "kpc2",
-                                Repository.PROCCESSCONTEXT
+                                LocalData.PROCCESSCONTEXT
                             ),
 
                             QuickButtonQuestion(
                                 "Cancelar",
-                                "kpc1", Repository.PROCCESSCONTEXTCANCELAR
+                                "kpc1", LocalData.PROCCESSCONTEXTCANCELAR
                             ),
                         )
                     )
